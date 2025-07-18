@@ -1,0 +1,658 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards: A Ortopedia de Deus</title>
+    <style>
+
+<style>
+    /* Adicione esta regra CSS para garantir que o texto seja visível */
+    .flashcard-content {
+        color: #333; /* Cor escura para melhor legibilidade */
+        line-height: 1.5;
+    }
+
+    /* Especificando cores para cada seção */
+    .back-question .flashcard-content {
+        color: #2c3e50; /* Azul muito escuro */
+    }
+
+    .back-answer .flashcard-content {
+        color: #006400; /* Verde escuro para respostas */
+    }
+
+    .back-explanation .flashcard-content {
+        color: #0d47a1; /* Azul escuro */
+    }
+
+    .back-examples .flashcard-content {
+        color: #4a148c; /* Roxo escuro */
+    }
+</style>
+
+
+
+
+
+
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #166088;
+            --accent: #4fc3f7;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: var(--dark);
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+        
+        .flashcards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .flashcard {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            height: 200px;
+            perspective: 1000px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        
+        .flashcard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: transform 0.6s;
+        }
+        
+        .front {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transform: rotateY(0deg);
+        }
+        
+        .back-question {
+            background-color: var(--light);
+            transform: rotateY(180deg);
+        }
+        
+        .back-answer {
+            background-color: #e8f4fc;
+            transform: rotateY(180deg);
+            display: none;
+        }
+        
+        .back-explanation {
+            background-color: #f0f8ff;
+            transform: rotateY(180deg);
+            display: none;
+        }
+        
+        .back-examples {
+            background-color: #f5f9ff;
+            transform: rotateY(180deg);
+            display: none;
+        }
+        
+        .flashcard.active .front {
+            transform: rotateY(-180deg);
+        }
+        
+        .flashcard.active .back-question {
+            transform: rotateY(0deg);
+        }
+        
+        .flashcard.show-answer .back-answer {
+            display: flex;
+        }
+        
+        .flashcard.show-explanation .back-explanation {
+            display: flex;
+        }
+        
+        .flashcard.show-examples .back-examples {
+            display: flex;
+        }
+        
+        .flashcard-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .flashcard-header i {
+            margin-right: 8px;
+        }
+        
+        .question-header {
+            color: var(--secondary);
+        }
+        
+        .answer-header {
+            color: var(--success);
+        }
+        
+        .explanation-header {
+            color: var(--info);
+        }
+        
+        .examples-header {
+            color: var(--primary);
+        }
+        
+        .flashcard-content {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .nav-button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+        
+        .show-question {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .show-answer {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .show-explanation {
+            background-color: var(--info);
+            color: white;
+        }
+        
+        .show-examples {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .reset-card {
+            background-color: var(--light);
+            color: var(--dark);
+            border: 1px solid var(--dark);
+        }
+        
+        .progress-indicator {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--secondary);
+        }
+        
+        .chapter-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255,255,255,0.2);
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📚 A Ortopedia de Deus</h1>
+    <div class="flashcards-container">
+        <!-- Flashcard 1 -->
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-face front">
+                <div class="chapter-tag">Introdução</div>
+                <h3>O que é a Ortopedia de Deus?</h3>
+                <p>Clique para revelar</p>
+            </div>
+            <div class="flashcard-face back-question">
+                <div class="flashcard-header question-header">
+                    <i>❓</i> Pergunta
+                </div>
+                <div class="flashcard-content">
+                    Qual é o conceito central da "Ortopedia de Deus" e como essa visão foi revelada ao autor?
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-answer" onclick="showAnswer(event, this.parentElement.parentElement.parentElement)">Mostrar Resposta</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-answer">
+                <div class="flashcard-header answer-header">
+                    <i>✅</i> Resposta
+                </div>
+                <div class="flashcard-content">
+                    A "Ortopedia de Deus" é uma metáfora para o processo de cura espiritual que Deus realiza em almas quebradas, assim como um ortopedista cura ossos fraturados. Essa visão foi revelada ao autor durante sua internação em um hospital ortopédico, onde percebeu que Deus também precisa de "voluntários" para ajudar na cura espiritual das pessoas.
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-explanation" onclick="showExplanation(event, this.parentElement.parentElement.parentElement)">Explicação</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-explanation">
+                <div class="flashcard-header explanation-header">
+                    <i>📖</i> Explicação
+                </div>
+                <div class="flashcard-content">
+                    Assim como a ortopedia física trata de lesões no sistema musculoesquelético, a "Ortopedia Espiritual" trata de feridas na alma, desalinhamentos emocionais e fraturas de fé. O autor teve essa revelação ao observar o trabalho dos profissionais de saúde durante sua internação, percebendo que Deus opera de forma similar, mas em nível espiritual, restaurando corações quebrados e realinhando vidas ao Seu propósito.
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-examples" onclick="showExamples(event, this.parentElement.parentElement.parentElement)">Exemplos</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-examples">
+                <div class="flashcard-header examples-header">
+                    <i>🔍</i> Exemplos
+                </div>
+                <div class="flashcard-content">
+                    <p><strong>1. Fratura espiritual:</strong> Assim como uma fratura óssea impede o movimento, uma "fratura espiritual" (como traumas, decepções ou pecados não resolvidos) pode impedir o crescimento espiritual.</p>
+                    <p><strong>2. Voluntários espirituais:</strong> Assim como voluntários ajudam em hospitais, Deus chama crentes para ajudar na cura espiritual de outros através do amor, oração e aconselhamento.</p>
+                    <p><strong>3. Processo de cura:</strong> A cura espiritual, como a física, requer tempo, tratamento adequado (oração, Palavra de Deus) e acompanhamento.</p>
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 2 -->
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-face front">
+                <div class="chapter-tag">Capítulo 1</div>
+                <h3>Fratura Espiritual</h3>
+                <p>Clique para revelar</p>
+            </div>
+            <div class="flashcard-face back-question">
+                <div class="flashcard-header question-header">
+                    <i>❓</i> Pergunta
+                </div>
+                <div class="flashcard-content">
+                    O que são "fraturas espirituais" e como elas se manifestam na vida diária?
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-answer" onclick="showAnswer(event, this.parentElement.parentElement.parentElement)">Mostrar Resposta</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-answer">
+                <div class="flashcard-header answer-header">
+                    <i>✅</i> Resposta
+                </div>
+                <div class="flashcard-content">
+                    Fraturas espirituais são danos ou quebras na alma, fé ou relacionamento com Deus, causados por traumas, pecados não resolvidos, decepções ou crises. Manifestam-se através de: falta de alegria espiritual, dificuldade em orar, desânimo constante, sentimentos de distanciamento de Deus e padrões repetitivos de comportamento negativo.
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-explanation" onclick="showExplanation(event, this.parentElement.parentElement.parentElement)">Explicação</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-explanation">
+                <div class="flashcard-header explanation-header">
+                    <i>📖</i> Explicação
+                </div>
+                <div class="flashcard-content">
+                    Assim como uma fratura física causa dor e limitação, as fraturas espirituais prejudicam nossa conexão com Deus e nosso funcionamento espiritual. Podem ser causadas por: traumas não curados (Salmos 147:3), pecados não confessados (Tiago 5:16), decepções profundas (Provérbios 13:12) ou ataques espirituais (Efésios 6:12). A boa notícia é que Deus especializou-se em curar esses tipos de feridas (Isaías 53:5).
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-examples" onclick="showExamples(event, this.parentElement.parentElement.parentElement)">Exemplos</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-examples">
+                <div class="flashcard-header examples-header">
+                    <i>🔍</i> Exemplos
+                </div>
+                <div class="flashcard-content">
+                    <p><strong>1. Fratura por trauma:</strong> Uma pessoa que sofreu abuso pode ter dificuldade em confiar em Deus como Pai.</p>
+                    <p><strong>2. Fratura por pecado:</strong> Um vício não confessado pode criar uma barreira na relação com Deus.</p>
+                    <p><strong>3. Fratura por decepção:</strong> Uma oração não respondida como esperado pode levar a questionamentos da fé.</p>
+                    <p><strong>4. Sinais de alerta:</strong> Desinteresse por atividades espirituais antes prazerosas, isolamento da comunidade de fé, cinismo religioso.</p>
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 3 -->
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-face front">
+                <div class="chapter-tag">Capítulo 2</div>
+                <h3>A Clínica Celestial</h3>
+                <p>Clique para revelar</p>
+            </div>
+            <div class="flashcard-face back-question">
+                <div class="flashcard-header question-header">
+                    <i>❓</i> Pergunta
+                </div>
+                <div class="flashcard-content">
+                    Como o autor descreve a "Clínica Celestial" e qual é o papel dos voluntários espirituais nela?
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-answer" onclick="showAnswer(event, this.parentElement.parentElement.parentElement)">Mostrar Resposta</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-answer">
+                <div class="flashcard-header answer-header">
+                    <i>✅</i> Resposta
+                </div>
+                <div class="flashcard-content">
+                    A "Clínica Celestial" é uma metáfora para o trabalho de cura espiritual que Deus realiza, onde Ele atua como o "Médico dos médicos". Os voluntários espirituais são crentes comuns, sem necessidade de títulos ou status, mas com coração disposto a servir, ajudando na cura de almas quebradas através do amor, oração, aconselhamento e apoio.
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-explanation" onclick="showExplanation(event, this.parentElement.parentElement.parentElement)">Explicação</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-explanation">
+                <div class="flashcard-header explanation-header">
+                    <i>📖</i> Explicação
+                </div>
+                <div class="flashcard-content">
+                    A comparação com uma clínica ortopédica é profunda: assim como há diferentes especialidades e profissionais em um hospital, na obra espiritual há diversos dons e ministérios (1 Coríntios 12:4-6). Os voluntários não precisam de qualificações especiais, apenas disponibilidade (Isaías 6:8) e compaixão. Sua função é ser "instrumentos nas mãos do Médico Divino", aplicando o "tratamento" prescrito por Deus (Sua Palavra, oração, amor prático).
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-examples" onclick="showExamples(event, this.parentElement.parentElement.parentElement)">Exemplos</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-examples">
+                <div class="flashcard-header examples-header">
+                    <i>🔍</i> Exemplos
+                </div>
+                <div class="flashcard-content">
+                    <p><strong>1. Enfermeiros espirituais:</strong> Pessoas que cuidam dos "pacientes" com paciência e atenção, ouvindo suas dores sem julgamento.</p>
+                    <p><strong>2. Fisioterapeutas da fé:</strong> Aqueles que ajudam outros a "exercitarem" sua espiritualidade novamente, através do estudo bíblico e oração.</p>
+                    <p><strong>3. Assistentes sociais celestiais:</strong> Pessoas que ajudam a reintegrar os curados à comunidade de fé.</p>
+                    <p><strong>4. Equipe de limpeza:</strong> Os intercessores que "limpam" a atmosfera espiritual através da oração.</p>
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 4 -->
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-face front">
+                <div class="chapter-tag">Capítulo 3</div>
+                <h3>Mãos Paralisadas</h3>
+                <p>Clique para revelar</p>
+            </div>
+            <div class="flashcard-face back-question">
+                <div class="flashcard-header question-header">
+                    <i>❓</i> Pergunta
+                </div>
+                <div class="flashcard-content">
+                    O que representam as "mãos paralisadas" na ortopedia espiritual e como podem ser tratadas?
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-answer" onclick="showAnswer(event, this.parentElement.parentElement.parentElement)">Mostrar Resposta</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-answer">
+                <div class="flashcard-header answer-header">
+                    <i>✅</i> Resposta
+                </div>
+                <div class="flashcard-content">
+                    As "mãos paralisadas" representam a incapacidade de servir, amar e trabalhar para Deus devido a desânimo, culpa, medo ou traumas. O tratamento inclui: perdão (receber e conceder), redescoberta do propósito, pequenos atos de serviço para "reabilitação" e renovação da consagração a Deus.
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-explanation" onclick="showExplanation(event, this.parentElement.parentElement.parentElement)">Explicação</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-explanation">
+                <div class="flashcard-header explanation-header">
+                    <i>📖</i> Explicação
+                </div>
+                <div class="flashcard-content">
+                    Na Bíblia, as mãos simbolizam ação, serviço e bênção (1 Timóteo 2:8, Tiago 4:8). Quando "paralisadas" espiritualmente, a pessoa sabe o que deveria fazer, mas sente-se incapaz. As causas podem ser: perfeccionismo (medo de falhar), burnout espiritual, culpa por pecados passados ou falta de visão do propósito. A cura vem através da graça (que liberta do perfeccionismo), do perdão (que remove a culpa) e da redescoberta do amor como motivação (1 João 4:19).
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-examples" onclick="showExamples(event, this.parentElement.parentElement.parentElement)">Exemplos</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-examples">
+                <div class="flashcard-header examples-header">
+                    <i>🔍</i> Exemplos
+                </div>
+                <div class="flashcard-content">
+                    <p><strong>1. Paralisia por perfeccionismo:</strong> Um músico que para de tocar na igreja por medo de não performar perfeitamente.</p>
+                    <p><strong>2. Paralisia por culpa:</strong> Alguém que cometeu um erro grave e agora se sente indigno para servir.</p>
+                    <p><strong>3. Paralisia por desgaste:</strong> Um líder que "queimou" todas as energias e agora não consegue mais se envolver.</p>
+                    <p><strong>4. Tratamento:</strong> Começar com pequenos atos de amor, focar no relacionamento com Deus acima do desempenho, receber ministração de cura interior.</p>
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 5 -->
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-face front">
+                <div class="chapter-tag">Capítulo 4</div>
+                <h3>Joelhos Travados</h3>
+                <p>Clique para revelar</p>
+            </div>
+            <div class="flashcard-face back-question">
+                <div class="flashcard-header question-header">
+                    <i>❓</i> Pergunta
+                </div>
+                <div class="flashcard-content">
+                    O que significam os "joelhos travados" na analogia espiritual e qual é o papel da oração nesse processo de cura?
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-answer" onclick="showAnswer(event, this.parentElement.parentElement.parentElement)">Mostrar Resposta</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-answer">
+                <div class="flashcard-header answer-header">
+                    <i>✅</i> Resposta
+                </div>
+                <div class="flashcard-content">
+                    "Joelhos travados" representam a dificuldade ou incapacidade de orar, que pode ser causada por desânimo, dúvidas, falta de disciplina ou traumas espirituais. A oração é tanto o tratamento (exercício espiritual que traz cura) quanto o sinal de cura (quando os joelhos espirituais se flexionam novamente).
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-explanation" onclick="showExplanation(event, this.parentElement.parentElement.parentElement)">Explicação</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-explanation">
+                <div class="flashcard-header explanation-header">
+                    <i>📖</i> Explicação
+                </div>
+                <div class="flashcard-content">
+                    Na Bíblia, joelhos dobrados simbolizam submissão, dependência e oração (Efésios 3:14, Lucas 22:41). Joelhos "travados" indicam resistência a se curvar diante de Deus, muitas vezes devido a: orações não respondidas como esperado, falta de entendimento do propósito da oração ou secura espiritual. A cura vem através da redescoberta da oração como relacionamento (não apenas pedidos), da prática da oração simples e honesta (Salmos 62:8) e da compreensão do silêncio de Deus como parte do processo.
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-examples" onclick="showExamples(event, this.parentElement.parentElement.parentElement)">Exemplos</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-examples">
+                <div class="flashcard-header examples-header">
+                    <i>🔍</i> Exemplos
+                </div>
+                <div class="flashcard-content">
+                    <p><strong>1. Trauma de oração:</strong> Alguém que orou fervorosamente por uma cura que não veio e agora questiona se orar vale a pena.</p>
+                    <p><strong>2. Rigidez religiosa:</strong> A pessoa só sabe orar com fórmulas prontas e perdeu a espontaneidade.</p>
+                    <p><strong>3. Distração crônica:</strong> Dificuldade de concentração que leva a abandonar a vida de oração.</p>
+                    <p><strong>4. Tratamento:</strong> Começar com orações curtas e honestas, usar a Palavra como base para orar (Salmos), manter um diário de oração para registrar respostas.</p>
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 6 -->
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-face front">
+                <div class="chapter-tag">Capítulo 5</div>
+                <h3>Pés Feridos</h3>
+                <p>Clique para revelar</p>
+            </div>
+            <div class="flashcard-face back-question">
+                <div class="flashcard-header question-header">
+                    <i>❓</i> Pergunta
+                </div>
+                <div class="flashcard-content">
+                    O que representam os "pés feridos" na analogia espiritual e qual é o processo para restaurar a caminhada com Deus?
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-answer" onclick="showAnswer(event, this.parentElement.parentElement.parentElement)">Mostrar Resposta</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-answer">
+                <div class="flashcard-header answer-header">
+                    <i>✅</i> Resposta
+                </div>
+                <div class="flashcard-content">
+                    "Pés feridos" simbolizam desvios do caminho de Deus, interrupções na jornada espiritual ou dificuldade em avançar na fé. A restauração envolve: arrependimento (reconhecer os desvios), realinhamento (voltar ao caminho certo), cura das feridas que causaram o desvio e reabilitação através de passos firmes de obediência.
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-explanation" onclick="showExplanation(event, this.parentElement.parentElement.parentElement)">Explicação</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-explanation">
+                <div class="flashcard-header explanation-header">
+                    <i>📖</i> Explicação
+                </div>
+                <div class="flashcard-content">
+                    Na Bíblia, os pés representam nossa caminhada e direção de vida (Provérbios 4:26-27, Salmos 119:105). Pés feridos podem resultar de: escolhas erradas, desvios morais, influências negativas ou ataques espirituais. O salmista ora: "Guia meus passos conforme a tua palavra" (Salmos 119:133). A cura começa com honestidade sobre onde erramos (1 João 1:9), continua com a decisão de voltar (Atos 3:19) e se consolida com novos hábitos que mantêm nos no caminho certo.
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button show-examples" onclick="showExamples(event, this.parentElement.parentElement.parentElement)">Exemplos</button>
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+            <div class="flashcard-face back-examples">
+                <div class="flashcard-header examples-header">
+                    <i>🔍</i> Exemplos
+                </div>
+                <div class="flashcard-content">
+                    <p><strong>1. Desvio por escolhas:</strong> Alguém que priorizou carreira sobre fé e agora se sente distante de Deus.</p>
+                    <p><strong>2. Ferida por tropeço:</strong> Uma pessoa que caiu em pecado e agora tem medo de tentar caminhar novamente.</p>
+                    <p><strong>3. Paralisia por medo:</strong> Alguém que parou no caminho espiritual por temor do futuro.</p>
+                    <p><strong>4. Tratamento:</strong> Confissão e arrependimento, estabelecimento de novas rotinas espirituais, prestação de contas com outros crentes, pequenos passos de fé diários.</p>
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-button reset-card" onclick="resetCard(this.parentElement.parentElement.parentElement)">Recomeçar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="progress-indicator">Clique em um flashcard para começar a estudar</div>
+
+    <script>
+        function flipCard(card) {
+            if (!card.classList.contains('active')) {
+                // Close all other cards first
+                document.querySelectorAll('.flashcard').forEach(otherCard => {
+                    if (otherCard !== card) {
+                        resetCard(otherCard);
+                    }
+                });
+                
+                card.classList.add('active');
+            }
+        }
+        
+        function showAnswer(event, card) {
+            event.stopPropagation();
+            card.classList.add('show-answer');
+            updateProgress(card, 'Resposta revelada');
+        }
+        
+        function showExplanation(event, card) {
+            event.stopPropagation();
+            card.classList.add('show-explanation');
+            updateProgress(card, 'Explicação revelada');
+        }
+        
+        function showExamples(event, card) {
+            event.stopPropagation();
+            card.classList.add('show-examples');
+            updateProgress(card, 'Exemplos revelados');
+        }
+        
+        function resetCard(card) {
+            card.classList.remove('active', 'show-answer', 'show-explanation', 'show-examples');
+            updateProgress(card, 'Flashcard reiniciado');
+        }
+        
+        function updateProgress(card, action) {
+            const title = card.querySelector('.front h3').textContent;
+            const progressElement = document.querySelector('.progress-indicator');
+            progressElement.textContent = `${action}: ${title}`;
+            
+            // Add temporary animation
+            progressElement.style.color = '#166088';
+            setTimeout(() => {
+                progressElement.style.color = '';
+            }, 1000);
+        }
+        
+        // Prevent card flipping when clicking buttons
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', event => {
+                event.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>
