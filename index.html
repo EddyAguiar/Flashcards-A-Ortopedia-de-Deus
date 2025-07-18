@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Ortopedia de Deus - Flashcards</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f7f7f7, #e6f0f8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    h1 {
+      color: #3a4e75;
+    }
+    .flashcard-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 2rem;
+    }
+    .flashcard {
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      transition: transform 0.3s;
+      cursor: pointer;
+      position: relative;
+    }
+    .flashcard:hover {
+      transform: scale(1.03);
+    }
+    .flashcard.revealed .question,
+    .flashcard.revealed .answer,
+    .flashcard.revealed .explanation {
+      display: block;
+    }
+    .question, .answer, .explanation {
+      display: none;
+      margin-top: 1rem;
+    }
+    .question { color: #0066cc; font-weight: bold; }
+    .answer { color: #008000; font-weight: bold; }
+    .explanation { color: #444; font-size: 0.95rem; }
+    .emoji {
+      font-size: 1.4rem;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>A Ortopedia de Deus 🏥</h1>
+  <p><strong>Subtítulo:</strong> Cura, Restauração e Propósito para Almas Quebradas</p>
+  <div class="flashcard-container" id="flashcards">
+    <!-- Flashcards inseridos dinamicamente abaixo -->
+  </div>
+
+  <script>
+    const flashcardsData = [
+      {
+        emoji: "📑",
+        title: "Introdução",
+        question: "Como nasceu a visão da Ortopedia Espiritual?",
+        answer: "Durante uma internação hospitalar após um acidente.",
+        explanation: "O autor viu o cuidado dos profissionais e ouviu Deus dizer que precisava de voluntários espirituais para curar almas fraturadas.",
+        examples: ["✔️ Convite à cura interior", "✔️ Visão ministerial através da dor"]
+      },
+      {
+        emoji: "🦴",
+        title: "Capítulo 1",
+        question: "O que são fraturas espirituais?",
+        answer: "São feridas internas na alma, emoções e fé quebradas.",
+        explanation: "Elas se manifestam como desânimo, ansiedade, tristeza ou falta de direção espiritual.",
+        examples: ["✔️ Falta de esperança", "✔️ Sentimento de abandono"]
+      },
+      {
+        emoji: "🤲",
+        title: "Capítulo 2",
+        question: "O que é a Clínica Celestial?",
+        answer: "É a visão de um hospital espiritual comandado por Deus.",
+        explanation: "Uma comparação direta entre ortopedia física e espiritual, onde Deus é o médico e nós somos chamados a cuidar dos outros.",
+        examples: ["✔️ Voluntários espirituais como cuidadores", "✔️ Sala de oração como sala de atendimento"]
+      },
+      {
+        emoji: "🧎",
+        title: "Capítulo 3",
+        question: "O que representam mãos paralisadas?",
+        answer: "A falta de ação espiritual ou desistência no serviço.",
+        explanation: "A fé enfraquecida nos impede de tocar vidas e servir ao próximo.",
+        examples: ["✔️ Não orar por ninguém", "✔️ Cansaço na obra de Deus"]
+      },
+      {
+        emoji: "🦵",
+        title: "Capítulo 4",
+        question: "Por que os joelhos espirituais travam?",
+        answer: "Por falta de oração e conexão com Deus.",
+        explanation: "A oração é o que nos sustenta e alinha com a vontade divina.",
+        examples: ["✔️ Falta de intercessão", "✔️ Desânimo para orar"]
+      },
+      {
+        emoji: "👣",
+        title: "Capítulo 5",
+        question: "O que significa ter os pés feridos?",
+        answer: "Significa estar fora do caminho de Deus.",
+        explanation: "A caminhada espiritual se desvia quando perdemos o foco no propósito.",
+        examples: ["✔️ Abandono de ministério", "✔️ Caminhos de pecado"]
+      },
+      {
+        emoji: "🩹",
+        title: "Capítulo 6",
+        question: "O que é o processo de tratamento espiritual?",
+        answer: "Tempo necessário para cura da alma.",
+        explanation: "Deus trata com paciência nossas dores internas até estarmos prontos para andar de novo.",
+        examples: ["✔️ Dor emocional", "✔️ Isolamento para cura"]
+      },
+      {
+        emoji: "📖",
+        title: "Capítulo 7",
+        question: "O que é o receituário da fé?",
+        answer: "Versículos e promessas que curam a alma.",
+        explanation: "A Palavra de Deus é o principal medicamento da ortopedia espiritual.",
+        examples: ["✔️ Salmo 147:3", "✔️ Isaías 53:5"]
+      },
+      {
+        emoji: "🕊️",
+        title: "Capítulo 8",
+        question: "Como funciona a reabilitação espiritual?",
+        answer: "Com práticas diárias de fé e exercícios espirituais.",
+        explanation: "Reeducação emocional, comunhão e leitura da Palavra fortalecem o espírito.",
+        examples: ["✔️ Devocionais diários", "✔️ Meditação bíblica"]
+      },
+      {
+        emoji: "👩‍⚕️",
+        title: "Capítulo 9",
+        question: "Quem são os voluntários anônimos da graça?",
+        answer: "Pessoas dispostas a cuidar dos outros espiritualmente.",
+        explanation: "Não é preciso título, apenas disposição para servir e amar.",
+        examples: ["✔️ Conselheiros espirituais", "✔️ Intercessores"]
+      },
+      {
+        emoji: "🏥",
+        title: "Capítulo 10",
+        question: "O que é a alta espiritual?",
+        answer: "É quando somos restaurados e enviados para servir.",
+        explanation: "A cura não é fim, mas começo de uma missão.",
+        examples: ["✔️ Testemunhar", "✔️ Ajudar outros a se reerguer"]
+      }
+    ];
+
+    const container = document.getElementById("flashcards");
+
+    flashcardsData.forEach(card => {
+      const div = document.createElement("div");
+      div.classList.add("flashcard");
+      div.innerHTML = `
+        <div class="emoji">${card.emoji}</div>
+        <div class="title"><strong>${card.title}</strong></div>
+        <div class="question">❓ ${card.question}</div>
+        <div class="answer">✅ ${card.answer}</div>
+        <div class="explanation">📝 ${card.explanation}</div>
+        <div class="examples">${card.examples.map(e => `<div>${e}</div>`).join('')}</div>
+      `;
+      div.addEventListener("click", () => div.classList.toggle("revealed"));
+      container.appendChild(div);
+    });
+  </script>
+</body>
+</html>
